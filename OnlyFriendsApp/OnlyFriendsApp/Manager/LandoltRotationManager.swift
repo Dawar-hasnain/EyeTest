@@ -19,7 +19,8 @@ struct LandoltRotationManager {
     }
     
     var rotationAngle: Double{
-        Double(currentDirection.rawValue) * 45 + 68 // we have rotated it to our desired 22 degree
+        Double(currentDirection.rawValue) * 45 + 45 // we have rotated it to our desired 22 degree
+        //Double(currentDirection.rawValue) * 45
         //currentDirection.angle
     }
 }

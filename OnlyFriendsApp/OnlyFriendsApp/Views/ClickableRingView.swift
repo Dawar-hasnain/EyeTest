@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ClickableRingView: View {
     let onSegmentTap: (Int) -> Void
+    let questionIndex: Int
     @State private var selectedIndex: Int? = nil
     let ringAngleOffset: Double = 22 // degrees
     
@@ -27,8 +28,9 @@ struct ClickableRingView: View {
                     endAngle: endAngle
                 )
                 .fill(
-                    selectedIndex == index ? Color.gray.opacity(0.4): Color.black
+                    selectedIndex == index ? Color.white: Color.black
                 )
+                .animation(.easeInOut(duration: 0.1), value: selectedIndex)
                 .overlay(
                     RingSegmentShape(
                         startAngle: startAngle,
@@ -36,6 +38,7 @@ struct ClickableRingView: View {
                     )
                     .stroke(Color.white, lineWidth: 2)
                 )
+                .contentShape(RingSegmentShape(startAngle: startAngle, endAngle: endAngle))
                 .onTapGesture {
                     selectedIndex = index
                     onSegmentTap(index)
@@ -45,5 +48,16 @@ struct ClickableRingView: View {
         }
         .frame(width: 280, height: 280)
         .accessibilityHidden(true)
+        .onChange(of: questionIndex) { oldValue, newValue in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    selectedIndex = nil
+                }
+            }
+        }
     }
+}
+
+#Preview {
+    ClickableRingView(onSegmentTap: { index in}, questionIndex: 0)
 }

@@ -16,9 +16,9 @@ struct VisualAcuityTestManager {
     private(set) var attemptCount: Int = 0
 
     // MARK: - Size control
-    private(set) var currentSize: CGFloat = 120
+    private(set) var currentSize: CGFloat = 200
     private let minSize: CGFloat = 40
-    private let shrinkFactor: CGFloat = 0.95   // 5% decrease per correct
+    private let shrinkFactor: CGFloat = 10   // 5% decrease per correct
 
     // MARK: - Result tracking
     private(set) var finalNumerator: Int? = nil   // x / 6
@@ -35,7 +35,7 @@ struct VisualAcuityTestManager {
     mutating func startTest() {
         correctCount = 0
         attemptCount = 0
-        currentSize = 120
+        currentSize = 200
         finalNumerator = nil
         rotationManager.randomize()
     }
@@ -49,7 +49,7 @@ struct VisualAcuityTestManager {
 
         if isCorrect {
             correctCount += 1
-            currentSize = max(currentSize * shrinkFactor, minSize)
+            currentSize = max(currentSize - shrinkFactor, minSize)
 
             // Capture result at 9th correct
             if correctCount == 9 {
