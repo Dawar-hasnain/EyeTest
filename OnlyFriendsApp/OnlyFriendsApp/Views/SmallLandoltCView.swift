@@ -15,7 +15,7 @@ struct SmallLandoltCView: View {
         Image("landolt_small")
             .resizable()
             .scaledToFit()
-            .frame(width: 200, height: 200)
+            .frame(width: size, height: size)
             .rotationEffect(.degrees(rotationAngle))
             .accessibilityLabel("Landolt C")
     }

@@ -18,7 +18,7 @@ struct VisualAcuityTestManager {
     // MARK: - Size control
     private(set) var currentSize: CGFloat = 200
     private let minSize: CGFloat = 40
-    private let shrinkFactor: CGFloat = 10   // 5% decrease per correct
+    private let shrinkFactor: CGFloat = 20  // 15pts decrease per correct
 
     // MARK: - Result tracking
     private(set) var finalNumerator: Int? = nil   // x / 6
@@ -69,16 +69,17 @@ struct VisualAcuityTestManager {
     // MARK: - Size → Relative Snellen (x/6)
     private func mapSizeToNumerator(_ size: CGFloat) -> Int {
         switch size {
-        case 40...50:
-            return 6   // 6/6 (normal)
-        case 51...65:
+        case 0...110:
+            return 6   // 6/6 (best achievable)
+        case 111...130:
             return 5   // 5/6
-        case 66...80:
+        case 131...150:
             return 4   // 4/6
-        case 81...100:
+        case 151...170:
             return 3   // 3/6
         default:
             return 2   // 2/6 or worse
         }
     }
+
 }

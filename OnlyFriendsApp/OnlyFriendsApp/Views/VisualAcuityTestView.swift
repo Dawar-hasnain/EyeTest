@@ -102,6 +102,7 @@ struct VisualAcuityTestView: View {
     private func handleTap(_ tappedIndex: Int) {
         
         let isCorrect = testManager.registerAnswer(tappedIndex: tappedIndex)
+        print("Current size:", testManager.currentSize)
         
         withAnimation(.easeIn(duration: 0.2)) {
             feedback = isCorrect ? .correct : .incorrect
