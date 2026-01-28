@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct HomeView: View {
+    @State private var startAstigmatismTest = false
+    @State private var startColorBlindTest = false
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -54,8 +57,18 @@ struct HomeView: View {
                 switch testType{
                 case .visualAcuity:
                     VisualAcuityFlowView()
+                    
+                case .colorContrast:
+                    ColorContrastFlowView()
+                
+                case .colorBlindness:
+                        ColorBlind()
+                    
+                case .astigmatism:
+                        LeftEye()
                 default:
-                    TestPlaceholderView(testType: testType)
+                    EmptyView()
+                    //TestPlaceholderView(testType: testType)
                 }
             }
         }
