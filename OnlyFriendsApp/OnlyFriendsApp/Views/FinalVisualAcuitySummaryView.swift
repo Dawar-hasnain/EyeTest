@@ -36,6 +36,7 @@ struct FinalVisualAcuitySummaryView: View {
             .buttonStyle(.borderedProminent)
         }
         .padding()
+        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: - Eye Result Block

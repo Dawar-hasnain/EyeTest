@@ -16,6 +16,8 @@ struct ColorContrastTestView: View {
     @State private var testManager = ColorContrastTestManager()
     @State private var feedback: FeedbackState? = nil
     @State private var testFinished = false
+    @State private var showAlert = false
+    @State private var displayManager = DisplayManager()
 
     enum FeedbackState {
         case correct
@@ -111,6 +113,19 @@ struct ColorContrastTestView: View {
             testManager.startTest()
         }
         .navigationBarBackButtonHidden(true)
+        .task {
+            displayManager.lockMaxBrightness()
+            showAlert = true
+        }
+        .onDisappear {
+            displayManager.restoreSettings()
+        }
+        .alert("Important Setup", isPresented: $showAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Step 1: Brightness has been set to Max. \nPlease manually turn off 'True Tone' in Control Center for accurate results.\n\nStep 2: Holding a phone of approximately 20cm from your eyes would give you nearly accurate results.")
+                .multilineTextAlignment(.center)
+        }
     }
 
     // MARK: - Tap Handling
