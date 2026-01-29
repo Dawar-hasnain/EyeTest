@@ -40,34 +40,34 @@ struct VisualAcuityTestView: View {
             Spacer()
             
             VStack(spacing: 20) {
-
+                
                 ZStack {
                     // Fixed container
                     Color.clear
                         .frame(height: 240)   // 🔑 reserve space
-
+                    
                     SmallLandoltCView(
                         rotationAngle: testManager.rotationManager.rotationAngle,
                         size: testManager.currentSize
                     )
                 }
-
+                
                 Text(feedback == .correct ? "Correct" : (feedback == .incorrect ? "Incorrect" : " "))
                     .font(.headline)
                     .foregroundColor(feedback == .correct ? .green : .red)
                     .opacity(feedback == nil ? 0 : 1)
                     .frame(height: 24)
             }
-
+            
             
             Spacer()
             
             // MARK: - Clickable Ring
             ClickableRingView(
                 onSegmentTap: { tappedIndex in
-                handleTap(tappedIndex)
-            },
-            questionIndex: testManager.attemptCount)
+                    handleTap(tappedIndex)
+                },
+                questionIndex: testManager.attemptCount)
             .disabled(testFinished)
             .opacity(testFinished ? 0.5 : 1)
             
@@ -130,7 +130,7 @@ struct VisualAcuityTestView: View {
             feedback = isCorrect ? .correct : .incorrect
         }
         
-        if testManager.correctCount >= 9 {
+        if testManager.correctCount >= 9 || testManager.attemptCount == 15 {
             withAnimation(.spring()){
                 testFinished = true
             }

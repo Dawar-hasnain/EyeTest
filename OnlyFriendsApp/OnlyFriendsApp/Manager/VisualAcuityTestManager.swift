@@ -18,7 +18,7 @@ struct VisualAcuityTestManager {
     // MARK: - Size control
     private(set) var currentSize: CGFloat = 200
     private let minSize: CGFloat = 40
-    private let shrinkFactor: CGFloat = 20  // 15pts decrease per correct
+    private let shrinkFactor: CGFloat = 20  // 20pts decrease per correct
 
     // MARK: - Result tracking
     private(set) var finalNumerator: Int? = nil   // x / 6
@@ -28,7 +28,7 @@ struct VisualAcuityTestManager {
 
     // MARK: - Test state
     var isTestFinished: Bool {
-        correctCount >= 9 || attemptCount >= 15
+        correctCount == 9 || attemptCount >= 15
     }
 
     // MARK: - Start / Reset
