@@ -31,7 +31,7 @@ struct ColorContrastTestManager {
 
     // MARK: - Test state
     var isTestFinished: Bool {
-        correctCount == 9 || attemptCount >= 15
+        correctCount == 9 || attemptCount >= 13
     }
 
     // MARK: - Start / Reset
@@ -68,7 +68,7 @@ struct ColorContrastTestManager {
         }
 
         // Capture result if attempts exhausted
-        if attemptCount >= 15 && finalNumerator == nil {
+        if attemptCount >= 13 && finalNumerator == nil {
             finalNumerator = mapContrastToNumerator(Int(currentContrast))
         }
 

@@ -12,13 +12,14 @@ struct VisualAcuityFlowView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var selectedEye: EyeType? = nil
+    @State private var nextEyeToTest: EyeType = .right   // 🔑 start with Right eye
 
     @State private var leftEyeResult: VisualAcuityResult? = nil
     @State private var rightEyeResult: VisualAcuityResult? = nil
 
     var body: some View {
 
-        // BOTH EYES DONE → SUMMARY
+        // 1️⃣ BOTH EYES DONE → SUMMARY
         if let left = leftEyeResult, let right = rightEyeResult {
             FinalVisualAcuitySummaryView(
                 leftResult: left,
@@ -29,20 +30,22 @@ struct VisualAcuityFlowView: View {
             )
         }
 
-        // TESTING A SELECTED EYE
+        // 2️⃣ RUNNING TEST
         else if let eye = selectedEye {
             VisualAcuityTestView(eye: eye) { result in
                 handleResult(result)
             }
-            .id(eye)   // 🔑 THIS IS THE FIX
+            .id(eye)   // 🔑 Force fresh state per eye
         }
 
-
-        // NO EYE SELECTED → SELECTION SCREEN
+        // 3️⃣ EYE SELECTION
         else {
-            EyeSelectionView { eye in
-                selectedEye = eye
-            }
+            EyeSelectionView(
+                eyeToTest: nextEyeToTest,
+                onSelectEye: { eye in
+                    selectedEye = eye
+                }
+            )
         }
     }
 
@@ -50,13 +53,15 @@ struct VisualAcuityFlowView: View {
     private func handleResult(_ result: VisualAcuityResult) {
 
         switch result.eye {
-        case .left:
-            leftEyeResult = result
-            selectedEye = rightEyeResult == nil ? .right : nil
 
         case .right:
             rightEyeResult = result
-            selectedEye = leftEyeResult == nil ? .left : nil
+            nextEyeToTest = .left      // 🔑 flip eye
+            selectedEye = nil          // go back to EyeSelectionView
+
+        case .left:
+            leftEyeResult = result
+            selectedEye = nil          // triggers summary
         }
     }
 }

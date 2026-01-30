@@ -16,8 +16,8 @@ struct VisualAcuityResult {
 
     var confidenceText: String {
         switch attemptsUsed {
-        case 9...10: return "High confidence"
-        case 11...13: return "Moderate confidence"
+        case 9: return "High confidence"
+        case 10...12: return "Moderate confidence"
         default: return "Low confidence"
         }
     }

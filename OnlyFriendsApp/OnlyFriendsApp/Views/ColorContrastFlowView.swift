@@ -1,10 +1,3 @@
-//
-//  ColorContrastFlowView.swift
-//  OnlyFriendsApp
-//
-//  Created by Dawar Hasnain on 28/01/26.
-//
-
 import SwiftUI
 
 struct ColorContrastFlowView: View {
@@ -12,6 +5,7 @@ struct ColorContrastFlowView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var selectedEye: EyeType? = nil
+    @State private var nextEyeToTest: EyeType = .right   // 🔑 Right eye first
 
     @State private var leftEyeResult: ColorContrastResult? = nil
     @State private var rightEyeResult: ColorContrastResult? = nil
@@ -34,14 +28,17 @@ struct ColorContrastFlowView: View {
             ColorContrastTestView(eye: eye) { result in
                 handleResult(result, for: eye)
             }
-            .id(eye)   // 🔑 Forces fresh state per eye
+            .id(eye)   // 🔑 Force fresh state per eye
         }
 
         // NO EYE SELECTED → SELECTION SCREEN
         else {
-            EyeSelectionViewColorContrast { eye in
-                selectedEye = eye
-            }
+            EyeSelectionViewColorContrast(
+                eyeToTest: nextEyeToTest,
+                onSelectEye: { eye in
+                    selectedEye = eye
+                }
+            )
         }
     }
 
@@ -51,11 +48,13 @@ struct ColorContrastFlowView: View {
         switch eye {
         case .left:
             leftEyeResult = result
-            selectedEye = rightEyeResult == nil ? .right : nil
+            selectedEye = nil
+            nextEyeToTest = .right
 
         case .right:
             rightEyeResult = result
-            selectedEye = leftEyeResult == nil ? .left : nil
+            selectedEye = nil
+            nextEyeToTest = .left
         }
     }
 }

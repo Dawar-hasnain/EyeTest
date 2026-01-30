@@ -9,40 +9,61 @@ import SwiftUI
 
 struct EyeSelectionViewColorContrast: View {
 
+    let eyeToTest: EyeType
     let onSelectEye: (EyeType) -> Void
 
     var body: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: 20) {
 
-            Text("Color Contrast Test")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+            // MARK: - Eye Icons
+            HStack(spacing: 30) {
 
-            Text("Select the eye you want to test")
-                .font(.headline)
-                .foregroundColor(.gray)
+                VStack {
+                    Image(systemName: eyeToTest == .left ? "eye.fill" : "eye.slash.fill")
+                        .font(.system(size: 50))
+                        .foregroundColor(eyeToTest == .left ? .blue : .gray)
 
-            VStack(spacing: 20) {
-
-                Button {
-                    onSelectEye(.left)
-                } label: {
-                    Text("Left Eye")
-                        .frame(maxWidth: .infinity)
+                    Text("Left")
+                        .font(.caption)
+                        .foregroundColor(eyeToTest == .left ? .primary : .secondary)
                 }
-                .buttonStyle(.borderedProminent)
 
-                Button {
-                    onSelectEye(.right)
-                } label: {
-                    Text("Right Eye")
-                        .frame(maxWidth: .infinity)
+                VStack {
+                    Image(systemName: eyeToTest == .right ? "eye.fill" : "eye.slash.fill")
+                        .font(.system(size: 50))
+                        .foregroundColor(eyeToTest == .right ? .blue : .gray)
+
+                    Text("Right")
+                        .font(.caption)
+                        .foregroundColor(eyeToTest == .right ? .primary : .secondary)
                 }
-                .buttonStyle(.borderedProminent)
             }
-            .padding(.horizontal)
+            .padding()
 
-            Spacer()
+            // MARK: - Instruction
+            Text(
+                eyeToTest == .right
+                ? "Cover your Left eye"
+                : "Cover your Right eye"
+            )
+            .font(.title2)
+            .fontWeight(.bold)
+            .padding()
+
+            // MARK: - Next Button
+            Button {
+                onSelectEye(eyeToTest)
+            } label: {
+                Text("Next")
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+            }
+            .padding(.horizontal, 40)
+            .padding(.bottom, 30)
         }
         .padding()
     }

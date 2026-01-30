@@ -78,7 +78,6 @@ struct VisualAcuityTestView: View {
                     let result = VisualAcuityResult(
                         eye: eye,
                         numerator: testManager.finalNumerator ?? 0,
-                        //snellenValue: testManager.finalSnellen ?? "—",
                         attemptsUsed: testManager.attemptCount)
                     onFinish(result)
                 }) {
@@ -130,7 +129,7 @@ struct VisualAcuityTestView: View {
             feedback = isCorrect ? .correct : .incorrect
         }
         
-        if testManager.correctCount >= 9 || testManager.attemptCount == 15 {
+        if testManager.correctCount >= 9 || testManager.attemptCount == 13 {
             withAnimation(.spring()){
                 testFinished = true
             }

@@ -33,7 +33,12 @@ struct FinalVisualAcuitySummaryView: View {
             Button("Go to Home") {
                 onDone()
             }
-            .buttonStyle(.borderedProminent)
+            .fontWeight(.bold)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(12)
         }
         .padding()
         .navigationBarBackButtonHidden(true)
