@@ -1,19 +1,79 @@
+//
+//  FinalVisualAcuitySummaryView.swift
+//  OnlyFriendsApp
+//
+//  Created by Dawar Hasnain on 27/01/26.
+//
+
+//
+//  HomeView.swift
+//  OnlyFriendsApp
+//
+//  Created by Dawar Hasnain on 27/01/26.
+//
+
 import SwiftUI
 
 struct HomeView: View {
-    @State private var startAstigmatismTest = false
-    @State private var startColorBlindTest = false
-    
+
+    // 🔑 Load user profile once
+    private let profile = UserProfileManager.shared.loadProfile()
+    let onResetProfile: () -> Void
+
+    @State private var showResetConfirmation = false
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 150) {
+                VStack(alignment: .leading, spacing: 60) {
 
-                    Text("Eye Health Tests")
+                    // MARK: - Profile Greeting
+                    VStack(alignment: .leading, spacing: 6) {
+
+                        Text(
+                            "Hello\(profile?.name.isEmpty == false ? ", \(profile!.name)" : "")"
+                        )
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .padding(.top, 20)
 
+                        Text("Let’s check your eye health today")
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.top, 20)
+
+                    // MARK: - Profile Summary Card
+                    if let profile {
+                        VStack(alignment: .leading, spacing: 12) {
+
+                            ProfileSummaryCardView(profile: profile)
+
+                            // MARK: - Reset Profile Button
+                            Button(role: .destructive) {
+                                showResetConfirmation = true
+                            } label: {
+                                Label("Reset Profile", systemImage: "arrow.counterclockwise")
+                                    .font(.subheadline)
+                            }
+                            .confirmationDialog(
+                                "Reset Profile?",
+                                isPresented: $showResetConfirmation,
+                                titleVisibility: .visible
+                            ) {
+                                Button("Reset and Start Fresh", role: .destructive) {
+                                    UserProfileManager.shared.resetProfile()
+                                    onResetProfile()
+                                }
+
+                                Button("Cancel", role: .cancel) {}
+                            } message: {
+                                Text(
+                                    "This will erase your profile and prior test context. The app will start fresh the next time you open it."
+                                )
+                            }
+                        }
+                    }
+
+                    // MARK: - Test Cards
                     VStack(spacing: 20) {
 
                         NavigationLink(value: EyeTestType.visualAcuity) {
@@ -54,26 +114,27 @@ struct HomeView: View {
                 .padding(.horizontal, 20)
             }
             .navigationDestination(for: EyeTestType.self) { testType in
-                switch testType{
+                switch testType {
                 case .visualAcuity:
                     VisualAcuityFlowView()
-                    
+
                 case .colorContrast:
                     ColorContrastFlowView()
-                
+
                 case .colorBlindness:
-                        ColorBlind()
-                    
+                    ColorBlind()
+
                 case .astigmatism:
-                        LeftEye()
+                    LeftEye()
+
                 default:
                     EmptyView()
-                    //TestPlaceholderView(testType: testType)
                 }
             }
         }
     }
 }
-#Preview {
-    HomeView()
-}
+
+//#Preview {
+//    HomeView()
+//}

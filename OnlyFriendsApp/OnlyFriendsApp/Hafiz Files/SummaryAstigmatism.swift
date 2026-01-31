@@ -8,39 +8,43 @@
 import SwiftUI
 
 struct SummaryAstigmatism: View {
-    
+
     let leftResult: Bool
     let rightResult: Bool
-    //@Binding var isNavigationActive: Bool
     let onDone: () -> Void
-    
+
+    // 🔑 Load profile once for contextual display
+    private let profile = UserProfileManager.shared.loadProfile()
+
     var body: some View {
         VStack(spacing: 30) {
+
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 80))
                 .foregroundColor(.green)
                 .padding(.top, 40)
-            
-            Text("Test Completed!")
+
+            Text("Astigmatism Summary")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
-            VStack(spacing: 15) {
-                ResultCard(eyeName: "Left Eye", isNormal: rightResult)
-                ResultCard(eyeName: "Right Eye", isNormal: leftResult)
+
+            VStack(spacing: 16) {
+                eyeResultView("Left Eye", isNormal: leftResult)
+                eyeResultView("Right Eye", isNormal: rightResult)
             }
             .padding(.horizontal)
-            
-            Text("Note: This test is for screening purposes only and does not replace a professional eye exam.")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-            
+
+//            Text("This test is for screening purposes only and does not replace a professional eye exam.")
+//                .font(.caption)
+//                .foregroundColor(.secondary)
+//                .multilineTextAlignment(.center)
+//                .padding(.horizontal, 40)
+
             Spacer()
-            
+
+            SummaryDisclaimerView()
+
             Button(action: {
-                //isNavigationActive = false
                 onDone()
             }) {
                 Text("Back to Home")
@@ -56,28 +60,51 @@ struct SummaryAstigmatism: View {
         }
         .navigationBarBackButtonHidden(true)
     }
-}
 
-struct ResultCard: View {
-    let eyeName: String
-    let isNormal: Bool
-    
-    var body: some View {
-        HStack {
-            Text(eyeName)
+    // MARK: - Eye Result Block
+    private func eyeResultView(_ title: String, isNormal: Bool) -> some View {
+        VStack(spacing: 8) {
+
+            Text(title)
                 .font(.headline)
-            Spacer()
-            HStack {
-                Text(isNormal ? "Normal" : "Indication of Astigmatism")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                Image(systemName: isNormal ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
+
+            // MARK: - Prescribed (Self-reported)
+            if profile?.hasAstigmatism == true {
+                HStack {
+                    Text("Prescribed (Self-reported)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    Text(profile?.astigmatismPrescription?.isEmpty == false
+                         ? profile!.astigmatismPrescription!
+                         : "Not sure")
+                        .font(.subheadline)
+                }
             }
-            .foregroundColor(isNormal ? .green : .orange)
+
+            // MARK: - Measured Result
+            HStack {
+                Text("Measured (This test)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Spacer()
+
+                HStack {
+                    Text(isNormal ? "Normal" : "Indication of Astigmatism")
+                        .fontWeight(.bold)
+                    Image(systemName: isNormal
+                          ? "checkmark.seal.fill"
+                          : "exclamationmark.triangle.fill")
+                }
+                .foregroundColor(isNormal ? .green : .orange)
+            }
         }
         .padding()
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(10)
+        .background(Color.gray.opacity(0.08))
+        .cornerRadius(12)
     }
 }
 

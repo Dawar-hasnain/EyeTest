@@ -13,6 +13,9 @@ struct FinalVisualAcuitySummaryView: View {
     let rightResult: VisualAcuityResult
     let onDone: () -> Void
 
+    // 🔑 Load profile once for contextual display
+    private let profile = UserProfileManager.shared.loadProfile()
+
     var body: some View {
         VStack(spacing: 32) {
 
@@ -22,13 +25,15 @@ struct FinalVisualAcuitySummaryView: View {
                 .fontWeight(.bold)
 
             // MARK: - Results
-            VStack(spacing: 16) {
+            VStack(spacing: 20) {
                 eyeResultView(leftResult)
                 eyeResultView(rightResult)
             }
 
             Spacer()
 
+            SummaryDisclaimerView()
+            
             // MARK: - Go Home Button
             Button("Go to Home") {
                 onDone()
@@ -46,16 +51,47 @@ struct FinalVisualAcuitySummaryView: View {
 
     // MARK: - Eye Result Block
     private func eyeResultView(_ result: VisualAcuityResult) -> some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 8) {
+
             Text(result.eye.rawValue)
                 .font(.headline)
 
-            Text(result.displayText)
-            //Text(result.snellenValue)
-                .font(.system(size: 40, weight: .bold))
+            // MARK: - Prescribed (Self-reported)
+            if profile?.hasMyopia == true {
+                HStack {
+                    Text("Prescribed (Self-reported)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
 
+                    Spacer()
+
+                    Text(profile?.myopiaPrescription?.isEmpty == false
+                         ? profile!.myopiaPrescription!
+                         : "Not sure")
+                        .font(.subheadline)
+                }
+            }
+
+            // MARK: - Measured Result
+            HStack {
+                Text("Measured:")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Spacer()
+
+                Text(result.displayText)
+                    .font(.title2)
+                    .fontWeight(.bold)
+            }
+
+            // MARK: - Confidence
             Text(result.confidenceText)
+                .font(.footnote)
                 .foregroundColor(.gray)
         }
+        .padding()
+        .background(Color.gray.opacity(0.08))
+        .cornerRadius(12)
     }
 }

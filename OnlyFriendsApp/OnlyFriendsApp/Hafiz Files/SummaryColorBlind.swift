@@ -8,26 +8,34 @@
 import SwiftUI
 
 struct SummaryColorBlind: View {
+
     let totalCorrect: Int
     let totalQuestions: Int
-    
-    @Environment(\.dismiss) private var dismiss
-    //@Binding var isNavigationActive: Bool
-    @State private var navigateToLeftEye = false
     let onDone: () -> Void
-    
+
+    @State private var navigateToLeftEye = false
+
+    // 🔑 Load profile once for contextual display
+    private let profile = UserProfileManager.shared.loadProfile()
+
     var isNormal: Bool {
-        return totalCorrect >= 5
+        totalCorrect >= 5
     }
-    
+
     var body: some View {
         VStack(spacing: 25) {
+
             Spacer()
+
+            // MARK: - Score Ring
             ZStack {
                 Circle()
-                    .stroke(isNormal ? Color.green.opacity(0.2) : Color.orange.opacity(0.2), lineWidth: 15)
+                    .stroke(
+                        isNormal ? Color.green.opacity(0.2) : Color.orange.opacity(0.2),
+                        lineWidth: 15
+                    )
                     .frame(width: 150, height: 150)
-                
+
                 VStack {
                     Text("\(totalCorrect)/\(totalQuestions)")
                         .font(.system(size: 40, weight: .bold))
@@ -36,24 +44,53 @@ struct SummaryColorBlind: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             Text(isNormal ? "Normal Vision" : "Vision Insight")
                 .font(.largeTitle)
-                .bold()
-            
-            Text(isNormal ?
-                 "Excellent! You have a strong ability to distinguish color patterns." :
-                 "You missed several plates. This might indicate color vision deficiency. We suggest visiting an eye specialist.")
+                .fontWeight(.bold)
+
+            // MARK: - Prescribed (Self-reported)
+            if profile?.hasColorBlindness == true {
+                HStack {
+                    Text("Prescribed (Self-reported)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    Text(profile?.colorBlindnessType?.isEmpty == false
+                         ? profile!.colorBlindnessType!
+                         : "Not sure")
+                        .font(.subheadline)
+                }
+                .padding(.horizontal, 40)
+            }
+
+            // MARK: - Measured Result
+            VStack(spacing: 6) {
+                Text("Measured:")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Text(
+                    isNormal
+                    ? "You were able to correctly identify most color plates."
+                    : "You missed several plates. This may indicate difficulty distinguishing certain color patterns."
+                )
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 30)
                 .foregroundColor(.secondary)
-            
+            }
+
             Spacer()
+
+            SummaryDisclaimerView()
             
+            // MARK: - Next Test
             Button(action: {
                 navigateToLeftEye = true
             }) {
-                Text("Next: Astigmatism Check ")
+                Text("Next: Astigmatism Check")
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -63,8 +100,8 @@ struct SummaryColorBlind: View {
             }
             .padding(.horizontal, 40)
             
+            // MARK: - Back to Home
             Button(action: {
-                //isNavigationActive = false
                 onDone()
             }) {
                 Text("Back to Home")
@@ -84,6 +121,7 @@ struct SummaryColorBlind: View {
         }
     }
 }
+
 
 //#Preview {
 //    SummaryColorBlind(totalCorrect: 4, totalQuestions: 6, onDone: {

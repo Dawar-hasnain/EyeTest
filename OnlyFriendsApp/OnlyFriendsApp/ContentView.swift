@@ -8,17 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
 
-#Preview {
-    ContentView()
+    @State private var hasProfile =
+        UserProfileManager.shared.hasCompletedOnboarding
+
+    var body: some View {
+        if hasProfile {
+            HomeView(onResetProfile: {
+                hasProfile = false
+            })
+        } else {
+            ProfileOnboardingFlowView {
+                hasProfile = true
+            }
+        }
+    }
 }

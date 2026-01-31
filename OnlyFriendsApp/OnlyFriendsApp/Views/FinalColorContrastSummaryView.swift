@@ -13,6 +13,9 @@ struct FinalColorContrastSummaryView: View {
     let rightResult: ColorContrastResult
     let onDone: () -> Void
 
+    // 🔑 Load profile once for contextual display
+    private let profile = UserProfileManager.shared.loadProfile()
+
     var body: some View {
         VStack(spacing: 32) {
 
@@ -22,13 +25,15 @@ struct FinalColorContrastSummaryView: View {
                 .fontWeight(.bold)
 
             // MARK: - Results
-            VStack(spacing: 16) {
+            VStack(spacing: 20) {
                 eyeResultView("Left Eye", leftResult)
                 eyeResultView("Right Eye", rightResult)
             }
 
             Spacer()
 
+            SummaryDisclaimerView()
+            
             // MARK: - Go Home Button
             Button("Go to Home") {
                 onDone()
@@ -46,18 +51,51 @@ struct FinalColorContrastSummaryView: View {
 
     // MARK: - Eye Result Block
     private func eyeResultView(_ title: String, _ result: ColorContrastResult) -> some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 8) {
+
             Text(title)
                 .font(.headline)
 
-            Text(result.displayText)        // e.g. 5/6
-                .font(.system(size: 40, weight: .bold))
+            // MARK: - Prescribed (Self-reported)
+            if profile?.hasColorBlindness == true {
+                HStack {
+                    Text("Prescribed (Self-reported)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
 
+                    Spacer()
+
+                    Text(profile?.colorBlindnessType?.isEmpty == false
+                         ? profile!.colorBlindnessType!
+                         : "Not sure")
+                        .font(.subheadline)
+                }
+            }
+
+            // MARK: - Measured Result
+            HStack {
+                Text("Measured:")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Spacer()
+
+                Text(result.displayText)   // e.g. 5/6
+                    .font(.title2)
+                    .fontWeight(.bold)
+            }
+
+            // MARK: - Interpretation & Confidence
             Text(result.interpretationText)
+                .font(.footnote)
                 .foregroundColor(.gray)
 
             Text(result.confidenceText)
+                .font(.footnote)
                 .foregroundColor(.gray)
         }
+        .padding()
+        .background(Color.gray.opacity(0.08))
+        .cornerRadius(12)
     }
 }
